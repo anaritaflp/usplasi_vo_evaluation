@@ -1,0 +1,7 @@
+<launch>
+
+	<node pkg="evaluate_vo" type="get_vo_node" name="get_vo" args="/home/anaritapereira/evaluate_vo_plots odometry" output="screen">
+        <remap from="get_data/visual_odometry" to="/vo/multicam_vo/odometry" />
+    </node>
+
+</launch>

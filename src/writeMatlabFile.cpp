@@ -19,8 +19,21 @@ void writeOdometry(std::ofstream *fd, bool &firstRow, const nav_msgs::Odometry::
     
     double val_tx, val_ty, val_tz, val_rx, val_ry, val_rz;
     getOdometryData(msg, val_tx, val_ty, val_tz, val_rx, val_ry, val_rz);
-    
+
     double timestamp = msg->header.stamp.toSec();
+    
+    int camIndex = -1;
+    if((msg->child_frame_id).length() == 14)
+    {
+		if((msg->child_frame_id)[12] >= '0' && (msg->child_frame_id)[12] <= '9' && (msg->child_frame_id)[13] >= '0' && (msg->child_frame_id)[13] <= '9')
+		{
+			char camNumber[3];
+			camNumber[0] = (msg->child_frame_id)[12];
+			camNumber[1] = (msg->child_frame_id)[13];
+			camNumber[2] = '\0';
+			camIndex = atoi(camNumber);
+		}
+	}
     
     if(!firstRow)
     {
@@ -32,7 +45,7 @@ void writeOdometry(std::ofstream *fd, bool &firstRow, const nav_msgs::Odometry::
         firstRow = false; 
     }
     
-    (*fd) << "\t" << std::fixed << timestamp << ", " << std::fixed << val_tx << ", " << std::fixed << val_ty << ", " << std::fixed << val_tz << ", " << std::fixed << val_rx << ", " << std::fixed << val_ry << ", " << std::fixed << val_rz;
+    (*fd) << "\t" << camIndex << ", " << std::fixed << timestamp << ", " << std::fixed << val_tx << ", " << std::fixed << val_ty << ", " << std::fixed << val_tz << ", " << std::fixed << val_rx << ", " << std::fixed << val_ry << ", " << std::fixed << val_rz;
     (*fd).flush();    
 }
 
