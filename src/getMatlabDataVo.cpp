@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     }
     
     std::string output_path(argv[1]);    
-    output_vo.open(output_path);
+    output_vo.open(output_path.c_str());
     
     beginFile(&output_vo, std::string(argv[2]), first_vo);
     

@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   geodesy
 )
 
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+
 add_message_files(
   FILES
   septentrio_asterx2.msg

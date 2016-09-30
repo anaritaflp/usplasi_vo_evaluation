@@ -31,10 +31,10 @@ void writeOdometry(std::ofstream *fd, bool &firstRow, const nav_msgs::Odometry::
 			camNumber[0] = (msg->child_frame_id)[12];
 			camNumber[1] = (msg->child_frame_id)[13];
 			camNumber[2] = '\0';
-			camIndex = atoi(camNumber);
+			camIndex = atoi(camNumber);            
 		}
 	}
-    
+
     if(!firstRow)
     {
         (*fd) << ";" << std::endl;
@@ -44,7 +44,7 @@ void writeOdometry(std::ofstream *fd, bool &firstRow, const nav_msgs::Odometry::
     {
         firstRow = false; 
     }
-    
+
     (*fd) << "\t" << camIndex << ", " << std::fixed << timestamp << ", " << std::fixed << val_tx << ", " << std::fixed << val_ty << ", " << std::fixed << val_tz << ", " << std::fixed << val_rx << ", " << std::fixed << val_ry << ", " << std::fixed << val_rz;
     (*fd).flush();    
 }
@@ -114,6 +114,27 @@ void writePoseCovarStamped(std::ofstream *fd, bool &firstRow, const geometry_msg
     (*fd) << "\t" << std::fixed << timestamp << ", " << std::fixed << val_tx << ", " << std::fixed << val_ty << ", " << std::fixed << val_tz << ", " << std::fixed << val_rx << ", " << std::fixed << val_ry << ", " << std::fixed << val_rz;
     (*fd).flush(); 
 }
+
+void writeIMU(std::ofstream *fd, bool &firstRow, const msgs_raw_imu::RawIMU::ConstPtr &msg)
+{
+    std::cout.precision(std::numeric_limits<double>::max_digits10);
+    double val_rx, val_ry, val_rz;
+    getIMUData(msg, val_rx, val_ry, val_rz);
+
+    double timestamp = msg->header.stamp.toSec();
+
+    if(!firstRow)
+    {
+        (*fd) << ";" << std::endl;
+    }
+    else
+    {
+        firstRow = false; 
+    }
+
+    (*fd) << "\t" << std::fixed << timestamp << ", " << std::fixed << std::fixed << val_rx << ", " << std::fixed << val_ry << ", " << std::fixed << val_rz;
+    (*fd).flush(); 
+}
  
 void getOdometryData(const nav_msgs::Odometry::ConstPtr &msg, double &tx, double &ty, double &tz, double &rx, double &ry, double &rz)
 {
@@ -162,5 +183,12 @@ void getPoseCovarStampedData(const geometry_msgs::PoseWithCovarianceStamped::Con
             
     tf::Quaternion q(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
     tf::Matrix3x3(q).getRPY(rx, ry, rz); 
+}
+
+void getIMUData(const msgs_raw_imu::RawIMU::ConstPtr &msg, double &rx, double &ry, double &rz)
+{
+    rx = msg->magnetic_field.x;
+    ry = msg->magnetic_field.y;
+    rz = msg->magnetic_field.z;
 }
 
